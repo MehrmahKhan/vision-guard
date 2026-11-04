@@ -4,6 +4,7 @@ dagshub==0.3.35
 keras-tuner==1.4.7
 dvc==3.55.2
 dvc-http==2.32.0
+pathspec==0.12.1
 numpy==1.26.4
 pandas==2.2.2
 pillow==10.4.0
