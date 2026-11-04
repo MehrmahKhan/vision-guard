@@ -5,7 +5,7 @@ row: what was decided, when, by which model, and how confidently.
 
 DATABASE_URL picks the backend:
     sqlite:///visionguard.db                      -> local SQLite file
-    postgresql://user:pass@db:5432/visionguard    -> Postgres in Compose
+    postgresql://visionguard:<password>@db:5432/visionguard -> Postgres in Compose
 
 No ORM, just the two drivers behind one small interface, because the schema is a
 single table and an ORM would be more moving parts than the task needs.

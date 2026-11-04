@@ -1,6 +1,6 @@
 # VisionGuard
 
-![CI](https://github.com/MehrmahKhan/23L-0623_A2_Ops/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/MehrmahKhan/vision-guard/actions/workflows/ci.yml/badge.svg)
 
 A web service that judges whether an uploaded image is AI-generated or a real
 photograph. TensorFlow/Keras for the model, MLflow on DagsHub for experiment
@@ -14,11 +14,11 @@ MLOps Assignment 2.
 
 | What | Where |
 |---|---|
-| GitHub | `https://github.com/MehrmahKhan/23L-0623_A2_Ops` |
-| DagsHub | `https://dagshub.com/MehrmahKhan/23L-0623_A2_Ops` |
-| MLflow | `https://dagshub.com/MehrmahKhan/23L-0623_A2_Ops.mlflow` |
+| GitHub | `https://github.com/MehrmahKhan/vision-guard` |
+| DagsHub | `https://dagshub.com/MehrmahKhan/vision-guard` |
+| MLflow | `https://dagshub.com/MehrmahKhan/vision-guard.mlflow` |
 | Model API | `https://<your-cloud-host>/predict` |
-| Graded commit | `<fill this in once you tag the submission>` |
+| Graded commit | `main` |
 
 ## Layout
 
