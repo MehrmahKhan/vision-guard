@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}VisionGuard &middot; Upload{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Is this image real, or made by AI?</h1>
+  <p class="lead">
+    Upload a picture and the model returns a verdict with a confidence value.
+    Nothing is stored on disk. Only the decision is written to the history log.
+  </p>
+
+  <form class="upload-form" action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+    <label class="dropzone" for="file">
+      <span class="dropzone-icon">+</span>
+      <span class="dropzone-text">Choose image</span>
+      <span class="dropzone-hint">PNG, JPG, JPEG, BMP, WEBP or GIF &middot; up to 5 MB</span>
+      <input type="file" id="file" name="file" accept="image/*" required>
+    </label>
+    <span id="chosen" class="chosen"></span>
+    <button type="submit" class="primary">Analyse image</button>
+  </form>
+
+  <p class="mode-note">
+    inference path: <strong>{{ mode }}</strong>
+    {% if mode == 'remote' %}(forwarded to the hosted model API){% else %}(local champion model){% endif %}
+  </p>
+</section>
+
+<script>
+  var input = document.getElementById('file');
+  var chosen = document.getElementById('chosen');
+  input.addEventListener('change', function () {
+    if (input.files.length > 0) {
+      chosen.textContent = input.files[0].name;
+    } else {
+      chosen.textContent = '';
+    }
+  });
+</script>
+{% endblock %}

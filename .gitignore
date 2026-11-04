@@ -1,0 +1,27 @@
+# secrets
+.env
+
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# data is tracked by DVC, not Git
+/data/raw/
+/data/interim/
+
+# outputs
+/artifacts/
+/models/*.keras
+/models/*.h5
+mlruns/
+mlflow.db
+*.sqlite
+*.db
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/

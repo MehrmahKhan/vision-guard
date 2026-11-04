@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}VisionGuard &middot; History{% endblock %}
+
+{% block content %}
+<section class="card wide">
+  <h1>Request history</h1>
+  <p class="lead">Every classification this service has made, newest first, read straight from the database.</p>
+
+  <div class="totals">
+    <div class="total"><span class="total-value">{{ totals.total }}</span><span class="total-label">requests</span></div>
+    <div class="total"><span class="total-value">{{ totals.ai }}</span><span class="total-label">judged AI</span></div>
+    <div class="total"><span class="total-value">{{ totals.real }}</span><span class="total-label">judged real</span></div>
+  </div>
+
+  {% if rows|length == 0 %}
+    <p class="empty">Nothing logged yet. Classify an image and it will show up here.</p>
+  {% else %}
+  <div class="table-scroll">
+    <table class="history">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>When (UTC)</th>
+          <th>File</th>
+          <th>Size</th>
+          <th>Verdict</th>
+          <th>p(AI)</th>
+          <th>Confidence</th>
+          <th>Threshold</th>
+          <th>Model</th>
+          <th>Path</th>
+          <th>Latency</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.id }}</td>
+          <td class="mono">{{ row.created_at|string|replace("T", " ")|truncate(19, true, "") }}</td>
+          <td>{{ row.file_name }}</td>
+          <td>{{ (row.file_size_bytes / 1024)|round(1) }} KB</td>
+          <td><span class="pill pill-{{ row.verdict|lower }}">{{ row.verdict }}</span></td>
+          <td class="mono">{{ row.probability_ai|round(4) }}</td>
+          <td class="mono">{{ (row.confidence * 100)|round(1) }}%</td>
+          <td class="mono">{{ row.threshold }}</td>
+          <td>{{ row.model_version }}</td>
+          <td>{{ row.source }}</td>
+          <td class="mono">{{ row.latency_ms }} ms</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <div class="actions">
+    <a class="primary" href="{{ url_for('index') }}">Back to upload</a>
+  </div>
+</section>
+{% endblock %}

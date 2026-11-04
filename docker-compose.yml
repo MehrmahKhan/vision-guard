@@ -1,0 +1,88 @@
+# Task 6.3 - the Compose stack: web app plus database.
+#
+# Design decisions this file makes, and why:
+#
+#   Service discovery: the web app reaches the database at the hostname "db",
+#   which is the service name. Compose puts both services on one private network
+#   and runs a DNS server on it, so no IP addresses are ever hard-coded.
+#
+#   Database port: there is no `ports:` entry under db. The database is reachable
+#   from the web container and from nowhere else. Publishing 5432 to the host
+#   would expose Postgres to the whole machine, and on a cloud VM with an open
+#   security group, to the internet.
+#
+#   Named volume: pgdata survives `docker compose down`. Without it, every
+#   restart would wipe the history table, which is the one thing Task 5 asks to
+#   be permanent.
+#
+#   Health check and depends_on: Postgres accepts TCP connections several
+#   seconds before it will accept queries. `condition: service_healthy` makes
+#   the web app wait for pg_isready rather than crash-looping on startup.
+#
+#   The model file: it is mounted, not baked into the image. The champion model
+#   changes whenever a better run wins, and rebuilding and re-pushing a 1 GB
+#   image for a 20 MB weights file is waste. A read-only bind mount also means
+#   the container can never corrupt the file. (The cloud model API in
+#   model_api/Dockerfile does the opposite and bakes it in, because serverless
+#   platforms give you no disk to mount from.)
+#
+#   Secrets: every password comes from .env, which is git-ignored.
+#   .env.example is committed so the next person knows which keys to supply.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: visionguard-web:latest
+    container_name: visionguard-web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      FLASK_DEBUG: "0"
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+      MODEL_PATH: /app/models/champion.keras
+      MODEL_VERSION: ${MODEL_VERSION:-champion}
+      IMG_SIZE: ${IMG_SIZE:-160}
+      DECISION_THRESHOLD: ${DECISION_THRESHOLD:-0.5}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-5}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      # Leave MODEL_API_URL empty for the Task 4/6 local-model demo.
+      # Set it to the cloud URL for the Task 8 integration demo.
+      MODEL_API_URL: ${MODEL_API_URL:-}
+      MODEL_API_KEY: ${MODEL_API_KEY:-}
+    volumes:
+      - ./models:/app/models:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - visionguard
+
+  db:
+    image: postgres:16-alpine
+    container_name: visionguard-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    networks:
+      - visionguard
+
+volumes:
+  pgdata:
+
+networks:
+  visionguard:
+    driver: bridge

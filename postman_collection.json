@@ -1,0 +1,74 @@
+{
+  "info": {
+    "name": "VisionGuard Model API",
+    "description": "Task 7 evidence. Set the collection variables base_url and api_key, then run each request and screenshot the response.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://your-cloud-host" },
+    { "key": "api_key", "value": "your-model-api-key" }
+  ],
+  "item": [
+    {
+      "name": "1. Health check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"] },
+        "description": "Should return 200 with model_loaded true. No API key needed."
+      }
+    },
+    {
+      "name": "2. Predict, valid image",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "X-API-Key", "value": "{{api_key}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [{ "key": "file", "type": "file", "src": "" }]
+        },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] },
+        "description": "Attach a real photo in the file field. Expect 200 with verdict REAL or AI plus a confidence."
+      }
+    },
+    {
+      "name": "3. Predict, AI image",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "X-API-Key", "value": "{{api_key}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [{ "key": "file", "type": "file", "src": "" }]
+        },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] },
+        "description": "Attach an AI-generated image. Expect verdict AI."
+      }
+    },
+    {
+      "name": "4. Predict with no API key (should be 401)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [{ "key": "file", "type": "file", "src": "" }]
+        },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] },
+        "description": "Proof that the endpoint is protected. Expect 401."
+      }
+    },
+    {
+      "name": "5. Predict with a non-image (should be 422)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "X-API-Key", "value": "{{api_key}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [{ "key": "file", "type": "file", "src": "" }]
+        },
+        "url": { "raw": "{{base_url}}/predict", "host": ["{{base_url}}"], "path": ["predict"] },
+        "description": "Attach a .txt renamed to .jpg. Expect 422 with an error message."
+      }
+    }
+  ]
+}
