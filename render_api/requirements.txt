@@ -1,0 +1,7 @@
+# Deliberately lightweight. No tensorflow: the TFLite interpreter alone runs
+# the converted model in roughly 120 MB instead of 400 MB plus.
+ai-edge-litert==1.2.0
+Flask==3.0.3
+gunicorn==22.0.0
+pillow==10.4.0
+numpy==1.26.4
