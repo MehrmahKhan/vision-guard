@@ -227,5 +227,18 @@ def too_large(_error):
     return jsonify({"error": "image larger than the limit"}), 413
 
 
+@app.errorhandler(404)
+def not_found(_error):
+    """Reports the path actually received, which makes a routing mismatch
+    on the hosting platform obvious instead of silent."""
+    return jsonify(
+        {
+            "error": "no route for this path",
+            "path_received": request.path,
+            "available": ["GET /health", "POST /predict"],
+        }
+    ), 404
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "8080")), debug=False)

@@ -1,12 +1,9 @@
 {
+  "framework": "flask",
   "functions": {
-    "api/index.py": {
+    "app.py": {
       "memory": 1024,
-      "maxDuration": 60,
-      "includeFiles": "models/**"
+      "maxDuration": 60
     }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index" }
-  ]
+  }
 }
