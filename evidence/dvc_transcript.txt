@@ -1,0 +1,187 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261105231902
+Username: DESKTOP-90E7HB0\DELL
+RunAs User: DESKTOP-90E7HB0\DELL
+Configuration Name: 
+Machine: DESKTOP-90E7HB0 (Microsoft Windows NT 10.0.22631.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\DELL\AppData\Local\Programs\Microsoft VS Code\a717861c07\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 9756
+PSVersion: 5.1.22621.6133
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.22621.6133
+BuildVersion: 10.0.22621.6133
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+============================================================================
+  1.4 toy  Initialise Git and DVC in an empty folder
+============================================================================
+
+PS> git init ; dvc init ; dir
+
+Initialized empty Git repository in C:/Users/DELL/dvc_toy_lab/.git/
+
+
+|                                                                     |
++---------------------------------------------------------------------+
+
+What's next?
+------------
+- Check out the documentation: <https://dvc.org/doc>
+- Get help and share ideas: <https://dvc.org/chat>
+- Star us on GitHub: <https://github.com/iterative/dvc>
+
+
+Mode   Name
+----   ----
+d----- .dvc
+d--h-- .git
+-a---- .dvcignore
+
+
+
+  [captured 01_init.png]
+============================================================================
+  1.4 toy  Create a small CSV and track it with DVC
+============================================================================
+
+PS> dvc add readings.csv
+
+readings.csv, version 1:
+sensor,value
+a,1
+b,2
+c,3
+
+
+To track the changes with git, run:
+
+	git add .gitignore readings.csv.dvc
+
+To enable auto staging, run:
+
+	dvc config core.autostage true
+
+.dvc
+.dvcignore
+.gitignore
+readings.csv
+readings.csv.dvc
+
+  [captured 02_add.png]
+============================================================================
+  1.4 toy  What the pointer file actually holds
+============================================================================
+
+PS> type readings.csv.dvc ; git add -A ; git commit
+
+outs:
+- md5: da942fcb568a2dcb82a3cb936ed0e9d4
+  size: 26
+  hash: md5
+  path: readings.csv
+
+pointer file size : 95 bytes
+data file size    : 26 bytes
+
+.gitignore written by DVC so Git never sees the data:
+/readings.csv
+
+0bb8a12 (HEAD -> master) data v1
+
+  [captured 03_pointer.png]
+============================================================================
+  1.4 toy  Change the data and commit version 2
+============================================================================
+
+PS> dvc add readings.csv ; git commit -m 'data v2'
+
+readings.csv, version 2:
+sensor,value
+a,1
+b,2
+c,3
+d,4
+e,5
+
+
+To enable auto staging, run:
+
+	dvc config core.autostage true
+
+the pointer now holds a different hash:
+outs:
+- md5: 29a34823457fba3822362c3751525b5e
+  size: 34
+  hash: md5
+  path: readings.csv
+26cb03e (HEAD -> master) data v2
+0bb8a12 data v1
+
+  [captured 04_v2.png]
+============================================================================
+  1.4 toy  Go back to version 1
+============================================================================
+
+PS> git checkout HEAD~1 -- readings.csv.dvc ; dvc checkout
+
+M       readings.csv
+
+readings.csv is now:
+sensor,value
+a,1
+b,2
+c,3
+
+Back to version 1 without ever storing the data in Git.
+
+  [captured 05_rollback.png]
+============================================================================
+  1.4 toy  Add a remote, push, delete locally, pull it back
+============================================================================
+
+PS> dvc remote add -d store ... ; dvc push ; rm data ; dvc pull
+
+Setting 'store' as a default remote.
+1 file pushed
+
+files now in the remote:
+1
+
+deleting the local copy AND the local cache ...
+readings.csv exists : False
+
+dvc pull:
+A       readings.csv
+1 file added and 1 file fetched
+
+recovered contents:
+sensor,value
+a,1
+b,2
+c,3
+d,4
+e,5
+
+  [captured 06_roundtrip.png]
+============================================================================
+  DVC toy lab finished
+============================================================================
+
+unique screenshots : 6 of 6
+
+  01_init.png | A throwaway folder with Git and DVC initialised. DVC creates a .dvc directory for its own config and cache, alongside the Git repository.
+  02_add.png | Version 1 of the data, three rows, tracked with dvc add. DVC moves the file into its cache and leaves a small pointer file behind.
+  03_pointer.png | The .dvc pointer file. It records only an md5 of the content, the size and the path. That is why it is safe to commit to Git while the data itself is not: the pointer is a few hundred bytes and never changes size, however large the data grows.
+  04_v2.png | Version 2, with two extra rows. dvc add rewrites the pointer with a new hash, and Git records that change. The data never enters Git, only the hash does.
+  05_rollback.png | Checking out the earlier commit restores the old pointer, and dvc checkout then restores the matching data from the cache. Five rows become three again. Git moved the pointer, DVC moved the data.
+  06_roundtrip.png | The full round trip. The data is pushed to a remote, then deleted from both the working folder and the local cache, so nothing is left. dvc pull fetches it back from the remote by hash.
+
+saved to C:\mlops_a3\evidence\dvc
+**********************
+Windows PowerShell transcript end
+End time: 20261105231926
+**********************

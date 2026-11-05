@@ -1,0 +1,6 @@
+﻿01_init.png | A throwaway folder with Git and DVC initialised. DVC creates a .dvc directory for its own config and cache, alongside the Git repository.
+02_add.png | Version 1 of the data, three rows, tracked with dvc add. DVC moves the file into its cache and leaves a small pointer file behind.
+03_pointer.png | The .dvc pointer file. It records only an md5 of the content, the size and the path. That is why it is safe to commit to Git while the data itself is not: the pointer is a few hundred bytes and never changes size, however large the data grows.
+04_v2.png | Version 2, with two extra rows. dvc add rewrites the pointer with a new hash, and Git records that change. The data never enters Git, only the hash does.
+05_rollback.png | Checking out the earlier commit restores the old pointer, and dvc checkout then restores the matching data from the cache. Five rows become three again. Git moved the pointer, DVC moved the data.
+06_roundtrip.png | The full round trip. The data is pushed to a remote, then deleted from both the working folder and the local cache, so nothing is left. dvc pull fetches it back from the remote by hash.
