@@ -1,0 +1,18 @@
+﻿18_6_4_layers.png | The layer breakdown of the optimised image. One layer, the pip install of tensorflow-cpu, accounts for nearly all of it, which tells you where any further saving would have to come from.
+19_6_4_bases2.png | The two candidate base images on this machine. Choosing the slim variant removes roughly 1.5 GB of compiler toolchain and documentation that an inference server never executes.
+20_6_4_cache.png | Rebuilding after a source change. Because requirements are installed before the source is copied, the 1.36 GB dependency layer is reused and the rebuild costs seconds instead of reinstalling TensorFlow.
+21_6_5_stop.png | docker compose stop halts both containers without deleting them or the named volume holding the database.
+22_6_5_start.png | docker compose start brings the same two containers back. The pgdata volume survived, so the request history is still there.
+23_6_5_restart.png | Restarting only the web service while the database keeps running, which is how a code change is picked up without dropping the data layer.
+24_6_5_logs.png | Gunicorn startup and request logs from the web service, and the Postgres startup sequence, both read through Compose.
+25_6_5_shells.png | The web container running as appuser with the model bind-mounted read-only, and the database container listing the table the application created.
+26_6_5_break.png | The web service pointed at the database with a deliberately wrong password. The failure is an authentication error, not a connection or name-resolution error, which is what points the diagnosis at the credentials rather than the network.
+27_6_5_fix.png | With the correct credentials restored from the environment file the stack returns to healthy and the application answers on its health endpoint.
+20_6_4_cache.png | Touching app/app.py and rebuilding. Because requirements are installed before the source is copied, the 1.36 GB dependency layer is reused and the rebuild finishes in seconds instead of reinstalling TensorFlow.
+21_6_5_stop.png | docker compose stop halts both containers without deleting them or the named volume that holds the database.
+22_6_5_start.png | docker compose start brings the same two containers back. The pgdata volume survived the stop, so the request history is intact.
+23_6_5_restart.png | Restarting the web service while the database keeps running, which is how a code change is picked up without disturbing the data layer.
+24_6_5_logs.png | Gunicorn startup and request logs from the web service, and the Postgres startup sequence, both read through Compose.
+25_6_5_shells.png | The web container running as the unprivileged appuser with the model bind-mounted read-only, and the database container listing the table the application created.
+26_6_5_break.png | The web service pointed at the database with a deliberately wrong password. The failure is an authentication error, not a connection or name-resolution error, which is what points the diagnosis at the credential rather than the network.
+27_6_5_fix.png | With the correct credential restored from the environment file the stack returns to healthy and the application answers on its health endpoint.

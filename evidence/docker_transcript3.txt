@@ -1,0 +1,297 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261105223229
+Username: DESKTOP-90E7HB0\DELL
+RunAs User: DESKTOP-90E7HB0\DELL
+Configuration Name: 
+Machine: DESKTOP-90E7HB0 (Microsoft Windows NT 10.0.22631.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\DELL\AppData\Local\Programs\Microsoft VS Code\a717861c07\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 9876
+PSVersion: 5.1.22621.6133
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.22621.6133
+BuildVersion: 10.0.22621.6133
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Bringing the stack back up before re-capturing 6.5.
+[+] up 3/3
+ ✔ Network mlops_a3_visionguard Created                                                      0.0s
+ ✔ Container visionguard-db     Healthy                                                      6.0s
+ ✔ Container visionguard-web    Started                                                      6.1s
+
+waiting for health checks ...
+============================================================================
+  6.4  Rebuild cost after a source change
+============================================================================
+
+PS C:\mlops_a3> (touch app\app.py) ; docker build -t visionguard-web:latest .
+
+app/app.py timestamp updated, contents unchanged.
+
+docker : #0 building with "desktop-linux" instance using docker driver
+At C:\mlops_a3\docker_auto3.ps1:100 char:34
++ ... asure-Command { docker build -t visionguard-web:latest . 2>&1 | Out-H ...
++                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (#0 building wit...g docker driver:String) [], Remo
+   teException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.43kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 1.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 187B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dc
+f2cfbe76ba9528b170f3fd79
+#4 resolve docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2c
+fbe76ba9528b170f3fd79 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 12.34kB done
+#5 DONE 0.0s
+
+#6 [5/7] RUN pip install --no-cache-dir -r requirements-serve.txt
+#6 CACHED
+
+#7 [6/7] COPY app/ ./app/
+#7 CACHED
+
+#8 [4/7] COPY requirements-serve.txt .
+#8 CACHED
+
+#9 [3/7] RUN apt-get update     && apt-get install --no-install-recommends -y libgomp1 curl
+&& rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [2/7] WORKDIR /app
+#10 CACHED
+
+#11 [7/7] RUN useradd --create-home --uid 10001 appuser     && mkdir -p /app/models /app/data
+  && chown -R appuser:appuser /app
+#11 CACHED
+
+#12 exporting to image
+#12 exporting layers done
+#12 exporting manifest sha256:d77fd8055c806a4c477ace704e7171f1a835d260205aa549056a69748cb138bd
+done
+#12 exporting config sha256:5c2d9cdd2c08ff477320566c8627e7961831057243b2d5fa58b6d9d2ef5316b8
+done
+#12 exporting attestation manifest
+sha256:67f0ac7bd68aebb5f0c652c8d3609a2dc9cf57f4246aea29a5c48c467a133908 0.0s done
+#12 exporting manifest list
+sha256:d5759fb05a245a0fb1a70b0c8f9fb6da577cd56d32378be1910b74ea7898c878
+#12 exporting manifest list
+sha256:d5759fb05a245a0fb1a70b0c8f9fb6da577cd56d32378be1910b74ea7898c878 0.0s done
+#12 naming to docker.io/library/visionguard-web:latest done
+#12 unpacking to docker.io/library/visionguard-web:latest 0.0s done
+#12 DONE 0.1s
+
+View build details:
+docker-desktop://dashboard/build/desktop-linux/desktop-linux/su4u5ppsny7zzxmwerx4n14ul
+
+rebuild took 2.54 seconds
+
+  [captured 20_6_4_cache.png]
+============================================================================
+  6.5  Stop
+============================================================================
+
+PS C:\mlops_a3> docker compose stop ; docker compose ps -a
+
+[+] stop 2/2
+ ✔ Container visionguard-web Stopped                                                         3.3s
+ ✔ Container visionguard-db  Stopped                                                         0.2s
+
+NAME              IMAGE                                                                     COMMA
+ND                  SERVICE   CREATED              STATUS                                PORTS
+visionguard-db    postgres:16-alpine                                                        "dock
+er-entrypoint.s…"   db        About a minute ago   Exited (0) Less than a second ago
+visionguard-web   sha256:25263721539c677ffaaaaa3be54997beffd6fb4b56d13e5b67057fb71329ab00   "sh -
+c 'gunicorn --b…"   web       About a minute ago   Exited (137) Less than a second ago
+
+  [captured 21_6_5_stop.png]
+============================================================================
+  6.5  Start
+============================================================================
+
+PS C:\mlops_a3> docker compose start ; docker compose ps
+
+[+] start 2/2
+ ✔ Container visionguard-db  Healthy                                                         5.7s
+ ✔ Container visionguard-web Started                                                         0.2s
+NAME              IMAGE                                                                     COMMA
+ND                  SERVICE   CREATED         STATUS                    PORTS
+visionguard-db    postgres:16-alpine                                                        "dock
+er-entrypoint.s…"   db        2 minutes ago   Up 51 seconds (healthy)   5432/tcp
+visionguard-web   sha256:25263721539c677ffaaaaa3be54997beffd6fb4b56d13e5b67057fb71329ab00   "sh -
+c 'gunicorn --b…"   web       2 minutes ago   Up 45 seconds (healthy)   0.0.0.0:5000->5000/tcp, [
+::]:5000->5000/tcp
+
+  [captured 22_6_5_start.png]
+============================================================================
+  6.5  Restart one service only
+============================================================================
+
+PS C:\mlops_a3> docker compose restart web ; docker compose ps
+
+[+] restart 0/1
+ - Container visionguard-web Restarting                                                      3.4s
+NAME              IMAGE                                                                     COMMA
+ND                  SERVICE   CREATED         STATUS                        PORTS
+visionguard-db    postgres:16-alpine                                                        "dock
+er-entrypoint.s…"   db        2 minutes ago   Up About a minute (healthy)   5432/tcp
+visionguard-web   sha256:25263721539c677ffaaaaa3be54997beffd6fb4b56d13e5b67057fb71329ab00   "sh -
+c 'gunicorn --b…"   web       2 minutes ago   Up 40 seconds (healthy)       0.0.0.0:5000->5000/tc
+p, [::]:5000->5000/tcp
+
+  [captured 23_6_5_restart.png]
+============================================================================
+  6.5  Logs from both services
+============================================================================
+
+PS C:\mlops_a3> docker compose logs --tail 14 web ; docker compose logs --tail 10 db
+
+WEB:
+visionguard-web  | [2026-11-05 17:33:54 +0000] [7] [INFO] Starting gunicorn 22.0.0
+visionguard-web  | [2026-11-05 17:33:54 +0000] [7] [INFO] Listening at: http://0.0.0.0:5000 (7)
+visionguard-web  | [2026-11-05 17:33:54 +0000] [7] [INFO] Using worker: gthread
+visionguard-web  | [2026-11-05 17:33:54 +0000] [8] [INFO] Booting worker with pid: 8
+visionguard-web  | database ready: db:5432/visionguard
+visionguard-web  | 127.0.0.1 - - [05/Nov/2026:17:33:59 +0000] "GET /health HTTP/1.1" 200 409 "-"
+"curl/8.14.1"
+visionguard-web  | 127.0.0.1 - - [05/Nov/2026:17:34:30 +0000] "GET /health HTTP/1.1" 200 409 "-"
+"curl/8.14.1"
+visionguard-web  | [2026-11-05 17:34:44 +0000] [7] [INFO] Starting gunicorn 22.0.0
+visionguard-web  | [2026-11-05 17:34:44 +0000] [7] [INFO] Listening at: http://0.0.0.0:5000 (7)
+visionguard-web  | [2026-11-05 17:34:44 +0000] [7] [INFO] Using worker: gthread
+visionguard-web  | [2026-11-05 17:34:44 +0000] [8] [INFO] Booting worker with pid: 8
+visionguard-web  | database ready: db:5432/visionguard
+visionguard-web  | 127.0.0.1 - - [05/Nov/2026:17:34:50 +0000] "GET /health HTTP/1.1" 200 409 "-"
+"curl/8.14.1"
+visionguard-web  | 127.0.0.1 - - [05/Nov/2026:17:35:20 +0000] "GET /health HTTP/1.1" 200 409 "-"
+"curl/8.14.1"
+
+DB:
+visionguard-db  | 2026-11-05 17:33:48.039 UTC [29] LOG:  database system was shut down at 2026-11
+-05 17:33:45 UTC
+visionguard-db  | 2026-11-05 17:33:48.044 UTC [1] LOG:  database system is ready to accept connec
+tions
+
+  [captured 24_6_5_logs.png]
+============================================================================
+  6.5  Inside each container
+============================================================================
+
+PS C:\mlops_a3> docker compose exec web sh ; docker compose exec db psql -c '\dt'
+
+WEB container:
+appuser
+/app
+---
+total 99872
+drwxrwxrwx 1 root    root         512 Nov  5 06:39 .
+drwxr-xr-x 1 appuser appuser     4096 Nov  5 17:22 ..
+-rwxrwxrwx 1 root    root     9642041 Nov  5 04:07 champion.keras
+-rwxrwxrwx 1 root    root     8872148 Nov  5 05:33 champion.tflite
+-rwxrwxrwx 1 root    root     2984270 Nov  4 19:28 run1-baseline.keras
+-rwxrwxrwx 1 root    root    19206347 Nov  4 21:03 run2-mnv2-finetuned.keras
+-rwxrwxrwx 1 root    root     9641999 Nov  4 21:12 run3-lr1e-4.keras
+-rwxrwxrwx 1 root    root     9641999 Nov  4 21:19 run4-no-augmentation.keras
+-rwxrwxrwx 1 root    root    22958094 Nov  4 21:31 run5-unfreeze40.keras
+-rwxrwxrwx 1 root    root     9642041 Nov  4 21:41 run6-img224.keras
+-rwxrwxrwx 1 root    root     9641999 Nov  4 21:47 run7-autolog.keras
+
+DB container:
+root
+             List of relations
+ Schema |    Name     | Type  |    Owner
+--------+-------------+-------+-------------
+ public | predictions | table | visionguard
+(1 row)
+
+  [captured 25_6_5_shells.png]
+============================================================================
+  6.5  Break it: wrong database password
+============================================================================
+
+PS C:\mlops_a3> docker compose run -e DATABASE_URL=...WRONG... web python -c 'db.init_db()'
+
+ Container visionguard-db Waiting
+ Container visionguard-db Healthy
+ Container mlops_a3-web-run-1bd6b8c284cd Creating
+ Container mlops_a3-web-run-1bd6b8c284cd Created
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/app/app/db.py", line 91, in init_db
+    connection = get_connection()
+                 ^^^^^^^^^^^^^^^^
+  File "/app/app/db.py", line 77, in get_connection
+    return psycopg2.connect(
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "db" (172.18.0.2), port 5432 failed: FATAL:
+password authentication failed for user "visionguard"
+
+
+
+Diagnosis: the hostname db resolved and the TCP connection was
+accepted, so the network and service name are correct. Only the
+credential is wrong.
+
+  [captured 26_6_5_break.png]
+============================================================================
+  6.5  Fixed and healthy again
+============================================================================
+
+PS C:\mlops_a3> docker compose up -d ; docker compose ps
+
+[+] up 2/2
+ ✔ Container visionguard-web Running                                                         0.0s
+ ✔ Container visionguard-db  Healthy                                                         0.5s
+NAME              IMAGE                                                                     COMMA
+ND                  SERVICE   CREATED         STATUS                        PORTS
+visionguard-db    postgres:16-alpine                                                        "dock
+er-entrypoint.s…"   db        3 minutes ago   Up 2 minutes (healthy)        5432/tcp
+visionguard-web   sha256:25263721539c677ffaaaaa3be54997beffd6fb4b56d13e5b67057fb71329ab00   "sh -
+c 'gunicorn --b…"   web       3 minutes ago   Up About a minute (healthy)   0.0.0.0:5000->5000/tc
+p, [::]:5000->5000/tcp
+
+health endpoint : 200
+  {"database":"reachable","inference_mode":"remote","max_upload_mb":"5","model_api_detail":"{\"input_size\":224,\"model\":\"champion-v2\",\"model_loaded\":true,\"platform\":\"vercel\",\"runtime\":\"tflite\",\"service\":\"visionguard-model-api\",\"status\":\"ok\",\"threshold\":0.55}\n","model_api_reachable":true,"model_api_url":"https://vision-guard-kappa.vercel.app/predict","status":"ok","threshold":"0.55"}
+
+  [captured 27_6_5_fix.png]
+============================================================================
+  6.5 re-captured
+============================================================================
+
+unique screenshots this run : 8 of 8
+
+  20_6_4_cache.png | Touching app/app.py and rebuilding. Because requirements are installed before the source is copied, the 1.36 GB dependency layer is reused and the rebuild finishes in seconds instead of reinstalling TensorFlow.
+  21_6_5_stop.png | docker compose stop halts both containers without deleting them or the named volume that holds the database.
+  22_6_5_start.png | docker compose start brings the same two containers back. The pgdata volume survived the stop, so the request history is intact.
+  23_6_5_restart.png | Restarting the web service while the database keeps running, which is how a code change is picked up without disturbing the data layer.
+  24_6_5_logs.png | Gunicorn startup and request logs from the web service, and the Postgres startup sequence, both read through Compose.
+  25_6_5_shells.png | The web container running as the unprivileged appuser with the model bind-mounted read-only, and the database container listing the table the application created.
+  26_6_5_break.png | The web service pointed at the database with a deliberately wrong password. The failure is an authentication error, not a connection or name-resolution error, which is what points the diagnosis at the credential rather than the network.
+  27_6_5_fix.png | With the correct credential restored from the environment file the stack returns to healthy and the application answers on its health endpoint.
+
+All captures are distinct. Nothing to redo.
+
+Afterwards:  docker compose down
+**********************
+Windows PowerShell transcript end
+End time: 20261105223629
+**********************

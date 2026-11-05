@@ -5,6 +5,7 @@
 #     .\docker_lab.ps1 build      # 6.2  build the web image, show the non-root user
 #     .\docker_lab.ps1 compose    # 6.3  bring up the stack, prove the db port is closed
 #     .\docker_lab.ps1 size       # 6.4  image size analysis
+#     .\docker_lab.ps1 sizecmp    # 6.4  measured before/after vs a naive image
 #     .\docker_lab.ps1 ops        # 6.5  start, stop, restart, logs, shells
 #     .\docker_lab.ps1 break      # 6.5  break it on purpose, read the logs
 #     .\docker_lab.ps1 fix        # 6.5  put it back
@@ -175,6 +176,47 @@ elseif ($stage -eq "fix") {
     Write-Host "6.5 done." -ForegroundColor Green
 }
 
+elseif ($stage -eq "sizecmp") {
+    Banner "6.4 - measured before/after: base image choice"
+    Write-Host "Pulling the full python:3.11 so the two bases can be compared."
+    docker pull python:3.11
+    docker pull python:3.11-slim
+    docker images --filter "reference=python:3.11*" --format "table {{.Repository}}:{{.Tag}}`t{{.Size}}"
+    Pause-Here "the two base images side by side, slim vs full"
+
+    Banner "6.4 - build the naive image"
+    Write-Host "This is Dockerfile.fat, the version with the three mistakes in it."
+    docker build -f Dockerfile.fat -t visionguard-web:fat .
+    Pause-Here "the naive build finishing"
+
+    Banner "6.4 - the comparison"
+    docker images visionguard-web --format "table {{.Tag}}`t{{.Size}}"
+    Write-Host ""
+    Write-Host "Largest layers in the OPTIMISED image:"
+    docker history visionguard-web:latest --human --format "table {{.Size}}`t{{.CreatedBy}}" | Select-Object -First 8
+    Write-Host ""
+    Write-Host "Largest layers in the NAIVE image:"
+    docker history visionguard-web:fat --human --format "table {{.Size}}`t{{.CreatedBy}}" | Select-Object -First 8
+    Pause-Here "both sizes and both layer breakdowns, this is the 6.4 evidence"
+
+    Banner "6.4 - cache behaviour, the other half of the saving"
+    Write-Host "Touching app/app.py and rebuilding BOTH images."
+    (Get-Item app\app.py).LastWriteTime = Get-Date
+    Write-Host ""
+    Write-Host "--- optimised: the pip install layer should stay CACHED ---"
+    Measure-Command { docker build -t visionguard-web:latest . } | Select-Object TotalSeconds
+    Write-Host ""
+    Write-Host "--- naive: the pip install layer is invalidated and reruns ---"
+    Measure-Command { docker build -f Dockerfile.fat -t visionguard-web:fat . } | Select-Object TotalSeconds
+    Pause-Here "the two rebuild times, proving the layer ordering matters"
+
+    Banner "6.4 - drop the naive image again"
+    docker rmi visionguard-web:fat python:3.11
+    docker images
+    Pause-Here "the cleanup"
+    Write-Host "6.4 done." -ForegroundColor Green
+}
+
 else {
-    Write-Host "Unknown stage. Use one of: warmup build compose size ops break fix" -ForegroundColor Red
+    Write-Host "Unknown stage. Use one of: warmup build compose size sizecmp ops break fix" -ForegroundColor Red
 }

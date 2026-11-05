@@ -1,0 +1,35 @@
+# Task 6.4 - the DELIBERATELY NAIVE image, kept only so the optimised one has
+# something to be measured against. Do not deploy this.
+#
+# Three mistakes are built in on purpose:
+#   1. python:3.11 instead of python:3.11-slim. The full image carries a
+#      complete build toolchain and docs that inference never touches.
+#   2. The whole project is copied in BEFORE pip install, so editing one line
+#      of app.py invalidates the dependency layer and reinstalls everything.
+#   3. The pip cache is left in the image instead of being discarded.
+#
+# It also runs as root and uses the Flask development server, which is why the
+# optimised Dockerfile does neither.
+
+FROM python:3.11
+
+ENV PORT=5000 \
+    MODEL_PATH=/app/models/champion.keras \
+    IMG_SIZE=160 \
+    DECISION_THRESHOLD=0.5
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y libgomp1 curl \
+    && echo "apt lists deliberately NOT cleaned, they stay in the layer"
+
+# mistake 2: source first, so the dependency layer below can never be cached
+COPY . .
+
+# mistake 3: no --no-cache-dir, the wheel cache stays in the image
+RUN pip install -r requirements-serve.txt
+
+EXPOSE 5000
+
+CMD ["python", "-m", "app.app"]
