@@ -51,6 +51,8 @@ def dvc_data_version():
             handle.close()
             for line in text.splitlines():
                 stripped = line.strip()
+                if stripped.startswith("-"):
+                    stripped = stripped[1:].strip()
                 if stripped.startswith("md5:"):
                     return stripped.split("md5:")[1].strip()
     return "unknown"
